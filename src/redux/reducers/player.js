@@ -2,8 +2,8 @@ import { PLAYER_LOGIN } from '../actions';
 
 const INITIAL_STATE = {
   name: '', // nome-da-pessoa,
-  assertions: '', // número-de-acertos,
-  score: '', // pontuação,
+  assertions: 0, // número-de-acertos,
+  score: 0, // pontuação,
   gravatarEmail: '', // email-da-pessoa,
 };
 
