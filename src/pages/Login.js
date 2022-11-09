@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 
 class Login extends React.Component {
   constructor() {
@@ -8,6 +9,7 @@ class Login extends React.Component {
       email: '',
       name: '',
       isBtnDisabled: true,
+      redirectToSettings: false,
     };
   }
 
@@ -25,8 +27,17 @@ class Login extends React.Component {
     this.setState({ isBtnDisabled: !(btnState) });
   };
 
+  clickButtonSettings = () => {
+    this.setState({ redirectToSettings: true });
+  };
+
   render() {
-    const { email, name, isBtnDisabled } = this.state;
+    const { email, name, isBtnDisabled, redirectToSettings } = this.state;
+
+    if (redirectToSettings) {
+      return <Redirect to="/settings" />;
+    }
+
     return (
       <main>
         <input
@@ -50,6 +61,12 @@ class Login extends React.Component {
         >
           Jogar
         </button>
+        <input
+          data-testid="btn-settings"
+          type="submit"
+          value="Settings"
+          onClick={ this.clickButtonSettings }
+        />
       </main>
     );
   }
