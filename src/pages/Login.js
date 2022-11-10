@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getToken, playerLogin } from '../redux/actions/index';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
+import { getToken, playerLogin } from '../redux/actions/index';
 
 class Login extends React.Component {
   constructor() {
