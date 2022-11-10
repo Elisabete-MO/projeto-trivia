@@ -1,4 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
+import { getToken, playerLogin } from '../redux/actions/index';
+import '../styles/login.css';
 
 class Login extends React.Component {
   constructor() {
@@ -8,6 +13,7 @@ class Login extends React.Component {
       email: '',
       name: '',
       isBtnDisabled: true,
+      redirectToSettings: false,
     };
   }
 
@@ -17,16 +23,34 @@ class Login extends React.Component {
 
   verifyBtn = () => {
     const { email, name } = this.state;
-    const regex = /\S+@\S+\.\S+/;
-    // const min = '1';
+    const regex = /^[\w-.]+@([\w-]+\.)+[\w-]{3}$/g;
     const verifyEmail = regex.test(email);
     const verifyName = name.length > 0;
     const btnState = verifyEmail && verifyName;
     this.setState({ isBtnDisabled: !(btnState) });
   };
 
+  handleSubmit = () => {
+    const { dispatch, history } = this.props;
+    const { name, email } = this.state;
+
+    const playerInfo = { name, email };
+    dispatch(getToken());
+    dispatch(playerLogin(playerInfo));
+    history.push('./game');
+  };
+
+  clickButtonSettings = () => {
+    this.setState({ redirectToSettings: true });
+  };
+
   render() {
-    const { email, name, isBtnDisabled } = this.state;
+    const { email, name, isBtnDisabled, redirectToSettings } = this.state;
+
+    if (redirectToSettings) {
+      return <Redirect to="/settings" />;
+    }
+
     return (
       <main>
         <input
@@ -47,12 +71,26 @@ class Login extends React.Component {
           type="button"
           data-testid="btn-play"
           disabled={ isBtnDisabled }
+          onClick={ this.handleSubmit }
         >
           Jogar
         </button>
+        <input
+          data-testid="btn-settings"
+          type="submit"
+          value="Settings"
+          onClick={ this.clickButtonSettings }
+        />
       </main>
     );
   }
 }
 
-export default Login;
+Login.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+};
+
+export default connect()(Login);
