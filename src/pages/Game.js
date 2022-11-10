@@ -16,15 +16,14 @@ class Game extends React.Component {
   }
 
   getQuestion = async () => {
-    const { history } = this.props;
     const token = localStorage.getItem('token');
     const apiQuestion = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
     const response = await apiQuestion.json();
     const quest = response;
-    // console.log(quest);
 
     if (quest.response_code !== 0) {
-      localStorage.remove('token');
+      const { history } = this.props;
+      localStorage.removeItem('token');
       history.push('/');
     } else {
       return this.setState({

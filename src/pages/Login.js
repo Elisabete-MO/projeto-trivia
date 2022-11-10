@@ -16,6 +16,11 @@ class Login extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(getToken());
+  }
+
   handleChange = ({ target: { name, value } }) => {
     this.setState(({ [name]: value }), () => this.verifyBtn());
   };
@@ -34,7 +39,6 @@ class Login extends React.Component {
     const { name, email } = this.state;
 
     const playerInfo = { name, email };
-    dispatch(getToken());
     dispatch(playerLogin(playerInfo));
     history.push('./game');
   };
@@ -85,11 +89,16 @@ class Login extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  gettingToken: state.player.gettingToken,
+});
+
 Login.propTypes = {
+  // gettingToken: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
 };
 
-export default connect()(Login);
+export default connect(mapStateToProps)(Login);

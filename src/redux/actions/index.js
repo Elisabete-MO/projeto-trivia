@@ -17,24 +17,13 @@ const requestToken = () => ({
 });
 
 const requestFinished = (token) => {
-  localStorage.setItem('token', token);
+  localStorage.setItem('token', token.token);
   return { type: REQUEST_FINISHED, payload: token };
 };
-
-// const getQuestion = (payload) => ({
-//   type: GET_QUESTION,
-//   payload,
-// });
 
 export const getToken = () => (dispatch) => {
   dispatch(requestToken());
   return fetch('https://opentdb.com/api_token.php?command=request')
     .then((response) => response.json())
-    .then((token) => dispatch(requestFinished(token.token)));
+    .then((token) => dispatch(requestFinished(token)));
 };
-
-// export const requestQuestion = async (token) => {
-//   const response = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
-//   const quest = await response.json();
-//   return dispatch(getQuestion(quest));
-// };
