@@ -1,0 +1,45 @@
+.box_header {
+  align-items: center;
+  background: rgba(41, 40, 40, 0.781);
+  border: solid 2px rgba(41, 40, 40, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
+  display: flex;
+  flex-flow: row nowrap;
+  height: 20%;
+  justify-content: space-around;
+  text-align: center;
+  width: 100%;
+}
+
+.image_header {
+  background: rgba(41, 40, 40, 0.781);
+  border: solid 2px rgba(41, 40, 40, 0.8);
+  border-radius: 100px;
+  box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
+  flex-basis: 20px;
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.h1_header {
+  color: rgb(225, 225, 225);
+  font-size: 40px;
+  text-shadow: 3px 3px 15px rgba(255, 255, 255, 0.445);
+}
+
+h3 {
+  color: rgb(225, 225, 225);
+  text-shadow: 3px 3px 15px rgba(255, 255, 255, 0.445);
+}
+
+.email_header {
+  width: 30%;
+}
+
+.total_curr_div {
+  display: flex;
+  justify-content: space-evenly;
+  width: 30%;
+}
