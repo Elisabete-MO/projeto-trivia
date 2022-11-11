@@ -10,12 +10,13 @@ class Game extends React.Component {
     super();
 
     this.state = {
-      // alternativas: [],
+      alternativas: [],
       selected: [],
       position: 0,
       value: 0.5,
-      timeoutId: 0,
       isDisabled: false,
+      timer: 0,
+      intervalId: 0,
     };
   }
 
@@ -24,26 +25,67 @@ class Game extends React.Component {
   }
 
   getQuestion = async () => {
-    const { position } = this.state;
-
     const token = localStorage.getItem('token');
     const apiQuestion = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
     const response = await apiQuestion.json();
     const quest = response;
 
-    if (quest.response_code !== 0) {
+    this.setState(({ alternativas: quest }), () => this.checkToken());
+  };
+
+  checkToken = () => {
+    const { alternativas } = this.state;
+    console.log(alternativas);
+    if (alternativas.response_code !== 0) {
       const { history } = this.props;
       localStorage.removeItem('token');
       history.push('/');
     } else {
-      const delay = 1000;
-      const timeout = setInterval(this.countDowm, delay);
-      return this.setState(({
-        // alternativas: quest.results,
-        selected: [quest.results[position]],
-        timeoutId: timeout,
-      }));
+      this.startTimeout();
+      this.setSelectedQuestion();
     }
+  };
+
+  setSelectedQuestion = () => {
+    const { value, alternativas, position } = this.state;
+    const selected = [alternativas.results[position]];
+    const answerArray = [...selected[0].incorrect_answers, selected[0].correct_answer]
+      .sort(() => Math.random() - value);
+
+    this.setState(({
+      selected, answerArray,
+    }));
+  };
+
+  startTimeout = () => {
+    this.setState({ timer: 30 });
+
+    const DELAY = 1000;
+    const timeoutId = setInterval(() => {
+      const { timer, intervalId } = this.state;
+      this.setState({ timer: timer - 1 });
+
+      if (timer === 1) {
+        this.setState({ isDisabled: true });
+
+        clearTimeout(intervalId);
+      }
+    }, DELAY);
+
+    this.setState({ intervalId: timeoutId });
+  };
+
+  showCorrectAnswer = ({ target }) => {
+    this.setScore(target);
+
+    const correctButton = document.querySelector('.correct');
+    correctButton.style.border = '3px solid rgb(6, 240, 15)';
+
+    const wrongButtons = document.querySelectorAll('.wrong');
+
+    wrongButtons.forEach((ele) => {
+      ele.style.border = '3px solid red';
+    });
   };
 
   setScore = (target) => {
@@ -52,15 +94,16 @@ class Game extends React.Component {
     clearTimeout(timeoutId);
     let difficulty = 0;
     let assertions = 0;
+    const selec = selected[0].difficulty;
     if (target.className === 'correct') {
       assertions = 1;
-      if (selected[0].difficulty === 'easy') {
+      if (selec === 'easy') {
         const num = 1;
         difficulty = num;
-      } if (selected[0].difficulty === 'medium') {
+      } if (selec === 'medium') {
         const num = 2;
         difficulty = num;
-      } if (selected[0].difficulty === 'hard') {
+      } if (selec === 'hard') {
         const num = 3;
         difficulty = num;
       }
@@ -78,32 +121,8 @@ class Game extends React.Component {
     }
   };
 
-  showCorrectAnswer = ({ target }) => {
-    this.setScore(target);
-    const wrongButtons = document.querySelectorAll('.wrong');
-    const correctButton = document.querySelector('.correct');
-
-    correctButton.style.border = '3px solid rgb(6, 240, 15)';
-    wrongButtons.forEach((ele) => {
-      ele.style.border = '3px solid red';
-    });
-  };
-
-  countDowm = () => {
-    const { timeoutId } = this.state;
-
-    const timerElement = document.getElementById('counter');
-    // console.log(timerElement.innerHTML);
-    if (Number(timerElement.innerHTML) === 0) {
-      clearTimeout(timeoutId);
-      this.setState({ isDisabled: true });
-    } else {
-      timerElement.innerHTML -= 1;
-    }
-  };
-
   render() {
-    const { selected, value, isDisabled } = this.state;
+    const { selected, isDisabled, timer, answerArray } = this.state;
     console.log(selected);
     return (
       <main>
@@ -117,31 +136,29 @@ class Game extends React.Component {
             <p data-testid="question-category">{q.category}</p>
             <p data-testid="question-text">{q.question}</p>
             <div data-testid="answer-options">
-              {[...q.incorrect_answers, q.correct_answer]
-                .sort(() => Math.random() - value)
-                .map((que, index) => (
-                  <button
-                    key={ index }
-                    type="button"
-                    className={
-                      que === q.correct_answer
-                        ? 'correct'
-                        : 'wrong'
-                    }
-                    data-testid={
-                      que === q.correct_answer
-                        ? 'correct-answer'
-                        : `wrong-answer-${index}`
-                    }
-                    onClick={ this.showCorrectAnswer }
-                    disabled={ isDisabled }
-                  >
-                    {que}
-                  </button>))}
+              {answerArray.map((que, index) => (
+                <button
+                  key={ index }
+                  type="button"
+                  className={
+                    que === q.correct_answer
+                      ? 'correct'
+                      : 'wrong'
+                  }
+                  data-testid={
+                    que === q.correct_answer
+                      ? 'correct-answer'
+                      : `wrong-answer-${index}`
+                  }
+                  onClick={ this.showCorrectAnswer }
+                  disabled={ isDisabled }
+                >
+                  {que}
+                </button>))}
             </div>
           </div>
         ))}
-        <p id="counter">30</p>
+        <p id="counter">{timer}</p>
       </main>
     );
   }
