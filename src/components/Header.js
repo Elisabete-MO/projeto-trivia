@@ -3,35 +3,28 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import '../styles/header.css';
 import md5 from 'crypto-js/md5';
-import imagem from '../imgs/large.png';
 
 class Header extends Component {
-  state = {
-    url: '',
-  };
-
-  async componentDidMount() {
-    const { url } = this.state;
-    try {
-      const { email } = this.props;
-      const hashGravatar = md5({ email }).toString();
-      const request = await fetch(`https://www.gravatar.com/avatar/${hashGravatar}?d=retro`);
-      this.setState({ url: request.url });
-      console.log(url);
-    } catch (error) {
-      console.log('opsss', error);
-    }
-  }
+  // async componentDidMount() {
+  //   try {
+  //     const { email } = this.props;
+  //     const hashGravatar = md5(email).toString();
+  //     const request = await fetch(`https://www.gravatar.com/avatar/${hashGravatar}?d=retro`);
+  //     this.setState({ url: request.url });
+  //     console.log(this.state);
+  //   } catch (error) {
+  //     console.log('opsss', error);
+  //   }
+  // }
 
   render() {
-    const { url } = this.state;
-    const { name, score } = this.props;
+    const { name, score, email } = this.props;
 
     return (
       <header className="box_header">
         <img
           className="image_header"
-          src={ url }
+          src={ `https://www.gravatar.com/avatar/${md5(email)}` }
           data-testid="header-profile-picture"
           alt="Imagem Gravatar"
         />

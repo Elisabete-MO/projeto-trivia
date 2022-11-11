@@ -17,8 +17,8 @@
   border: solid 2px rgba(41, 40, 40, 0.8);
   border-radius: 100px;
   box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
-  size: 80px;
   position: relative;
+  size: 80px;
 }
 
 .h1_header {

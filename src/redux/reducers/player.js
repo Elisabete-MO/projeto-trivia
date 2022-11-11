@@ -1,4 +1,4 @@
-import { PLAYER_LOGIN, REQUEST_STARTED, REQUEST_FINISHED, REQUEST_GRAVATAR } from '../actions';
+import { PLAYER_LOGIN, REQUEST_STARTED, REQUEST_FINISHED } from '../actions';
 
 const INITIAL_STATE = {
   name: '', // nome-da-pessoa,
