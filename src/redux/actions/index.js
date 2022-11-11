@@ -1,12 +1,20 @@
 export const PLAYER_LOGIN = 'PLAYER_LOGIN';
 export const REQUEST_STARTED = 'REQUEST_STARTED';
 export const REQUEST_FINISHED = 'REQUEST_FINISHED';
+export const SET_SCORE = 'SET_SCORE';
 
 // Player Login
 
 export const playerLogin = (data) => ({
   type: PLAYER_LOGIN,
   payload: data,
+});
+
+// Player Score and Assertions
+
+export const playerScore = (score) => ({
+  type: SET_SCORE,
+  payload: score,
 });
 
 // Request Token
