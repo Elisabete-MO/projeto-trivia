@@ -13,6 +13,8 @@ class Game extends React.Component {
       selected: [],
       position: 0,
       value: 0.5,
+      timeoutId: 0,
+      isDisabled: false,
     };
   }
 
@@ -33,10 +35,13 @@ class Game extends React.Component {
       localStorage.removeItem('token');
       history.push('/');
     } else {
-      return this.setState({
+      const delay = 1000;
+      const timeout = setInterval(this.countDowm, delay);
+      return this.setState(({
         // alternativas: quest.results,
         selected: [quest.results[position]],
-      });
+        timeoutId: timeout,
+      }));
     }
   };
 
@@ -50,8 +55,20 @@ class Game extends React.Component {
     });
   };
 
+  countDowm = () => {
+    const { timeoutId } = this.state;
+
+    const timerElement = document.getElementById('counter');
+    if (Number(timerElement.innerHTML) === 0) {
+      clearTimeout(timeoutId);
+      this.setState({ isDisabled: true });
+    } else {
+      timerElement.innerHTML -= 1;
+    }
+  };
+
   render() {
-    const { selected, value } = this.state;
+    const { selected, value, isDisabled } = this.state;
     return (
       <main>
         <div className="container_game">
@@ -81,12 +98,14 @@ class Game extends React.Component {
                         : `wrong-answer-${index}`
                     }
                     onClick={ this.showCorrectAnswer }
+                    disabled={ isDisabled }
                   >
                     {que}
                   </button>))}
             </div>
           </div>
         ))}
+        <p id="counter">30</p>
       </main>
     );
   }
