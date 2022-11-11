@@ -4,7 +4,7 @@
   flex-flow: column wrap;
   height: 99%;
   left: 0;
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   width: 99.4%;
 }
