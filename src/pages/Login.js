@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { getToken, playerLogin } from '../redux/actions/index';
+import '../styles/login.css';
 
 class Login extends React.Component {
   constructor() {
@@ -94,7 +95,6 @@ const mapStateToProps = (state) => ({
 });
 
 Login.propTypes = {
-  // gettingToken: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
