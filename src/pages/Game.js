@@ -7,7 +7,10 @@ class Game extends React.Component {
     super();
 
     this.state = {
-      alternativas: [],
+      // alternativas: [],
+      selected: [],
+      position: 0,
+      value: 0.5,
     };
   }
 
@@ -16,6 +19,8 @@ class Game extends React.Component {
   }
 
   getQuestion = async () => {
+    const { position } = this.state;
+
     const token = localStorage.getItem('token');
     const apiQuestion = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
     const response = await apiQuestion.json();
@@ -27,35 +32,36 @@ class Game extends React.Component {
       history.push('/');
     } else {
       return this.setState({
-        alternativas: quest.results,
+        // alternativas: quest.results,
+        selected: [quest.results[position]],
       });
     }
   };
 
   render() {
-    const { alternativas } = this.state;
-    console.log(alternativas);
+    const { selected, value } = this.state;
+    console.log(selected);
     return (
       <>
         <h1>Trybe</h1>
         <h2>Score: 0</h2>
-        {alternativas.map((q, i) => (
+        {selected.map((q, i) => (
           <div key={ i }>
+            {/* { const arrayQuest = [...q.incorrect_answers, q.correct_answer] } */}
             <p data-testid="question-category">{q.category}</p>
             <p data-testid="question-text">{q.question}</p>
             <div data-testid="answer-options">
-              <button
-                type="button"
-                data-testid="correct-answer"
-              >
-                {q.correct_answer}
-              </button>
-              {q.incorrect_answers
+              {[...q.incorrect_answers, q.correct_answer]
+                .sort(() => Math.random() - value)
                 .map((que, index) => (
                   <button
                     key={ index }
                     type="button"
-                    data-testid={ `wrong-answer-${index}` }
+                    data-testid={
+                      que === q.correct_answer
+                        ? 'correct-answer'
+                        : `wrong-answer-${index}`
+                    }
                   >
                     {que}
                   </button>))}
