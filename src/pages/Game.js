@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
 import { playerScore } from '../redux/actions';
@@ -49,13 +50,23 @@ class Game extends React.Component {
 
   setSelectedQuestion = () => {
     const { value, alternativas, position } = this.state;
-    const selected = [alternativas.results[position]];
-    const answerArray = [...selected[0].incorrect_answers, selected[0].correct_answer]
-      .sort(() => Math.random() - value);
+    const num = 5;
 
-    this.setState(({
-      selected, answerArray,
-    }));
+    if (position < num) {
+      const selected = [alternativas.results[position]];
+      const answerArray = [...selected[0].incorrect_answers, selected[0].correct_answer]
+        .sort(() => Math.random() - value);
+
+      this.setState(({
+        selected,
+        answerArray,
+        btnNext: false,
+      }));
+    }
+  // } else {
+  //   this.setState({
+  //     // btnNext: false,
+  //   });
   };
 
   startTimeout = () => {
@@ -66,7 +77,7 @@ class Game extends React.Component {
       const { timer, intervalId } = this.state;
       this.setState({ timer: timer - 1 });
 
-      if (timer === 1) {
+      if (timer <= 1) {
         this.setState({ isDisabled: true });
 
         clearTimeout(intervalId);
@@ -91,9 +102,9 @@ class Game extends React.Component {
   };
 
   setScore = (target) => {
-    const { timeoutId, selected } = this.state;
+    const { intervalId, selected, timer } = this.state;
     const { dispatch, oldScore, oldAssertions } = this.props;
-    clearTimeout(timeoutId);
+    clearTimeout(intervalId);
     let difficulty = 0;
     let assertions = 0;
     const selec = selected[0].difficulty;
@@ -111,9 +122,8 @@ class Game extends React.Component {
       }
     }
 
-    const timer = document.getElementById('counter').innerHTML;
     const ten = 10;
-    const score = (ten + Number(timer) * difficulty);
+    const score = (ten + (timer * difficulty));
     const total = {
       score: score + oldScore,
       assertions: assertions + oldAssertions,
@@ -123,9 +133,27 @@ class Game extends React.Component {
     }
   };
 
+  handleClick = () => {
+    const { position } = this.state;
+
+    this.setState(
+      ({ position: position + 1 }),
+      this.setSelectedQuestion,
+      this.startTimeout(),
+    );
+  };
+
+  // this.setState({ age: value}, this.checkAge);
+  // this.setState(({ position: position + 1}), setSelectedQuestion);
+
   render() {
-    const { selected, isDisabled, timer, answerArray, btnNext } = this.state;
+    const { selected, isDisabled, timer, answerArray, btnNext, position } = this.state;
     console.log(selected);
+    const num = 5;
+    if (position === num) {
+      return <Redirect to="/feedback" />;
+    }
+
     return (
       <main>
         <div className="container_game">
@@ -164,6 +192,7 @@ class Game extends React.Component {
           <button
             type="button"
             data-testid="btn-next"
+            onClick={ this.handleClick }
           >
             Next
           </button>
