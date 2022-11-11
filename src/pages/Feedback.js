@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
+import Header from '../components/Header';
 
 class Feedback extends React.Component {
   constructor() {
@@ -15,7 +16,7 @@ class Feedback extends React.Component {
 
   render() {
     const { minAssertions, redirectToRanking } = this.state;
-    const { name, assertions, score } = this.props;
+    const { assertions, score, history } = this.props;
 
     if (redirectToRanking) {
       return <Redirect to="/ranking" />;
@@ -24,10 +25,7 @@ class Feedback extends React.Component {
     return (
       <main>
         <div>
-          {/* Requisito 12 -> (Talvez possa ser usado o componente header caso criado no Requisito 5) */}
-          {/* <img src={profileImage} alt="Profile picture" data-testid="header-profile-picture"/> */}
-          <h3 data-testid="header-player-name">{ name }</h3>
-          <p data-testid="header-score">{ score }</p>
+          <Header />
         </div>
 
         <div>
@@ -51,6 +49,22 @@ class Feedback extends React.Component {
           >
             Go to Ranking
           </button>
+          {/* Requisito 15 */}
+          <button
+            type="button"
+            data-testid="btn-play-again"
+            onClick={ () => { history.push('/'); } }
+          >
+            Play Again
+          </button>
+          {/* Requisito 16 */}
+          <button
+            type="button"
+            data-testid="btn-ranking"
+            onClick={ () => { history.push('/ranking'); } }
+          >
+            Ranking
+          </button>
         </div>
       </main>
     );
@@ -65,9 +79,12 @@ const mapStateToProps = ({ player }) => ({
 });
 
 Feedback.propTypes = {
-  name: PropTypes.string.isRequired,
   assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+  // name: PropTypes.string.isRequired,
   // profileImage: PropTypes.string.isRequired,
 };
 
