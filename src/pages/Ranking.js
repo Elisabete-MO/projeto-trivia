@@ -19,7 +19,7 @@ class Ranking extends React.Component {
           data-testid="btn-go-home"
           onClick={ () => { this.setState({ redirectLogin: true }); } }
         >
-          Play Again
+          Home
         </button>
       </div>
     );
