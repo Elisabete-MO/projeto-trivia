@@ -10,13 +10,18 @@ class Feedback extends React.Component {
 
     this.state = {
       minAssertions: 3,
+      redirectToLogin: false,
       redirectToRanking: false,
     };
   }
 
   render() {
-    const { minAssertions, redirectToRanking } = this.state;
+    const { minAssertions, redirectToRanking, redirectToLogin } = this.state;
     const { assertions, score, history } = this.props;
+
+    if (redirectToLogin) {
+      return <Redirect to="/" />;
+    }
 
     if (redirectToRanking) {
       return <Redirect to="/ranking" />;
@@ -41,13 +46,13 @@ class Feedback extends React.Component {
           {/* Requisito 14 */}
           <p data-testid="feedback-total-score">{ score }</p>
           <p data-testid="feedback-total-question">{ assertions }</p>
-          {/* Requisito 18 */}
+          {/* Requisito 15 */}
           <button
             type="button"
-            data-testid="btn-ranking"
-            onClick={ () => { this.setState({ redirectToRanking: true }); } }
+            data-testid="btn-play-again"
+            onClick={ () => { this.setState({ redirectToLogin: true }); } }
           >
-            Go to Ranking
+            Play Again
           </button>
           {/* Requisito 15 */}
           <button
