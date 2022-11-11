@@ -16,7 +16,7 @@ const requestToken = () => ({
 });
 
 const requestFinished = (token) => {
-  localStorage.setItem('token', token);
+  localStorage.setItem('token', token.token);
   return { type: REQUEST_FINISHED, payload: token };
 };
 
@@ -24,5 +24,5 @@ export const getToken = () => (dispatch) => {
   dispatch(requestToken());
   return fetch('https://opentdb.com/api_token.php?command=request')
     .then((response) => response.json())
-    .then((token) => dispatch(requestFinished(token.token)));
+    .then((token) => dispatch(requestFinished(token)));
 };

@@ -17,8 +17,10 @@
   border: solid 2px rgba(41, 40, 40, 0.8);
   border-radius: 100px;
   box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
+  flex-basis: 20px;
+  height: 100%;
   position: relative;
-  size: 80px;
+  width: 100%;
 }
 
 .h1_header {
