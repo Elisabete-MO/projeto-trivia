@@ -49,7 +49,7 @@ class Feedback extends React.Component {
             data-testid="btn-ranking"
             onClick={ () => { this.setState({ redirectToRanking: true }); } }
           >
-            Go to Ranking
+            Ranking
           </button>
         </div>
       </main>
