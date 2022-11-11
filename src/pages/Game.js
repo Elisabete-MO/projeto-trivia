@@ -17,6 +17,7 @@ class Game extends React.Component {
       isDisabled: false,
       timer: 0,
       intervalId: 0,
+      btnNext: false,
     };
   }
 
@@ -86,6 +87,7 @@ class Game extends React.Component {
     wrongButtons.forEach((ele) => {
       ele.style.border = '3px solid red';
     });
+    this.setState({ btnNext: true });
   };
 
   setScore = (target) => {
@@ -122,7 +124,7 @@ class Game extends React.Component {
   };
 
   render() {
-    const { selected, isDisabled, timer, answerArray } = this.state;
+    const { selected, isDisabled, timer, answerArray, btnNext } = this.state;
     console.log(selected);
     return (
       <main>
@@ -158,6 +160,14 @@ class Game extends React.Component {
             </div>
           </div>
         ))}
+        { btnNext && (
+          <button
+            type="button"
+            data-testid="btn-next"
+          >
+            Next
+          </button>
+        )}
         <p id="counter">{timer}</p>
       </main>
     );
