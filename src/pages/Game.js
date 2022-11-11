@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
+import { playerScore } from '../redux/actions';
 import '../styles/game.css';
 
 class Game extends React.Component {
@@ -45,7 +46,40 @@ class Game extends React.Component {
     }
   };
 
-  showCorrectAnswer = () => {
+  setScore = (target) => {
+    const { timeoutId, selected } = this.state;
+    const { dispatch, oldScore, oldAssertions } = this.props;
+    clearTimeout(timeoutId);
+    let difficulty = 0;
+    let assertions = 0;
+    if (target.className === 'correct') {
+      assertions = 1;
+      if (selected[0].difficulty === 'easy') {
+        const num = 1;
+        difficulty = num;
+      } if (selected[0].difficulty === 'medium') {
+        const num = 2;
+        difficulty = num;
+      } if (selected[0].difficulty === 'hard') {
+        const num = 3;
+        difficulty = num;
+      }
+    }
+
+    const timer = document.getElementById('counter').innerHTML;
+    const ten = 10;
+    const score = (ten + Number(timer) * difficulty);
+    const total = {
+      score: score + oldScore,
+      assertions: assertions + oldAssertions,
+    };
+    if (target.className === 'correct') {
+      dispatch(playerScore(total));
+    }
+  };
+
+  showCorrectAnswer = ({ target }) => {
+    this.setScore(target);
     const wrongButtons = document.querySelectorAll('.wrong');
     const correctButton = document.querySelector('.correct');
 
@@ -59,6 +93,7 @@ class Game extends React.Component {
     const { timeoutId } = this.state;
 
     const timerElement = document.getElementById('counter');
+    // console.log(timerElement.innerHTML);
     if (Number(timerElement.innerHTML) === 0) {
       clearTimeout(timeoutId);
       this.setState({ isDisabled: true });
@@ -69,6 +104,7 @@ class Game extends React.Component {
 
   render() {
     const { selected, value, isDisabled } = this.state;
+    console.log(selected);
     return (
       <main>
         <div className="container_game">
@@ -111,11 +147,18 @@ class Game extends React.Component {
   }
 }
 
+const mapStateToProps = ({ player }) => ({
+  oldScore: player.score,
+  oldAssertions: player.assertions,
+});
+
 Game.propTypes = {
-//   dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  oldScore: PropTypes.number.isRequired,
+  oldAssertions: PropTypes.number.isRequired,
 };
 
-export default connect()(Game);
+export default connect(mapStateToProps)(Game);

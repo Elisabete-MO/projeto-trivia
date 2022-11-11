@@ -1,4 +1,4 @@
-import { PLAYER_LOGIN, REQUEST_STARTED, REQUEST_FINISHED } from '../actions';
+import { PLAYER_LOGIN, REQUEST_STARTED, REQUEST_FINISHED, SET_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   name: '', // nome-da-pessoa,
@@ -13,6 +13,12 @@ const player = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case PLAYER_LOGIN:
     return { ...state, name: payload.name, gravatarEmail: payload.email };
+  case SET_SCORE:
+    return {
+      ...state,
+      assertions: payload.assertions,
+      score: payload.score,
+    };
   case REQUEST_STARTED:
     return { ...state };
   case REQUEST_FINISHED:
