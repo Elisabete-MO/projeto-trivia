@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 
 class Feedback extends React.Component {
   constructor() {
@@ -8,12 +9,18 @@ class Feedback extends React.Component {
 
     this.state = {
       minAssertions: 3,
+      redirectToRanking: false,
     };
   }
 
   render() {
-    const { minAssertions } = this.state;
+    const { minAssertions, redirectToRanking } = this.state;
     const { name, assertions, score } = this.props;
+
+    if (redirectToRanking) {
+      return <Redirect to="/ranking" />;
+    }
+
     return (
       <main>
         <div>
@@ -36,6 +43,14 @@ class Feedback extends React.Component {
           {/* Requisito 14 */}
           <p data-testid="feedback-total-score">{ score }</p>
           <p data-testid="feedback-total-question">{ assertions }</p>
+          {/* Requisito 18 */}
+          <button
+            type="button"
+            data-testid="btn-ranking"
+            onClick={ () => { this.setState({ redirectToRanking: true }); } }
+          >
+            Go to Ranking
+          </button>
         </div>
       </main>
     );
