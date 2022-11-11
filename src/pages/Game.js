@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Header from '../components/Header';
+import '../styles/game.css';
 
 class Game extends React.Component {
   constructor() {
@@ -42,7 +44,10 @@ class Game extends React.Component {
     const { selected, value } = this.state;
     console.log(selected);
     return (
-      <>
+      <main>
+        <div className="container_game">
+          <Header />
+        </div>
         <h1>Trybe</h1>
         <h2>Score: 0</h2>
         {selected.map((q, i) => (
@@ -68,7 +73,7 @@ class Game extends React.Component {
             </div>
           </div>
         ))}
-      </>
+      </main>
     );
   }
 }
