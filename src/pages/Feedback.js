@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
+import Header from '../components/Header';
 
 class Feedback extends React.Component {
   constructor() {
@@ -15,7 +16,7 @@ class Feedback extends React.Component {
 
   render() {
     const { minAssertions, redirectToRanking } = this.state;
-    const { name, assertions, score } = this.props;
+    const { assertions, score } = this.props;
 
     if (redirectToRanking) {
       return <Redirect to="/ranking" />;
@@ -23,15 +24,8 @@ class Feedback extends React.Component {
 
     return (
       <main>
+        <Header />
         <div>
-          {/* Requisito 12 -> (Talvez possa ser usado o componente header caso criado no Requisito 5) */}
-          {/* <img src={profileImage} alt="Profile picture" data-testid="header-profile-picture"/> */}
-          <h3 data-testid="header-player-name">{ name }</h3>
-          <p data-testid="header-score">{ score }</p>
-        </div>
-
-        <div>
-          {/* Requisito 13 */}
           <p data-testid="feedback-text">
             {
               assertions >= minAssertions
@@ -39,10 +33,9 @@ class Feedback extends React.Component {
                 : 'Could be better...'
             }
           </p>
-
-          {/* Requisito 14 */}
           <p data-testid="feedback-total-score">{ score }</p>
           <p data-testid="feedback-total-question">{ assertions }</p>
+
           {/* Requisito 18 */}
           <button
             type="button"
@@ -65,7 +58,7 @@ const mapStateToProps = ({ player }) => ({
 });
 
 Feedback.propTypes = {
-  name: PropTypes.string.isRequired,
+  // name: PropTypes.string.isRequired,
   assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
   // profileImage: PropTypes.string.isRequired,
