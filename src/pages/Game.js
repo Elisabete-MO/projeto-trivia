@@ -40,9 +40,18 @@ class Game extends React.Component {
     }
   };
 
+  showCorrectAnswer = () => {
+    const wrongButtons = document.querySelectorAll('.wrong');
+    const correctButton = document.querySelector('.correct');
+
+    correctButton.style.border = '3px solid rgb(6, 240, 15)';
+    wrongButtons.forEach((ele) => {
+      ele.style.border = '3px solid red';
+    });
+  };
+
   render() {
     const { selected, value } = this.state;
-    console.log(selected);
     return (
       <main>
         <div className="container_game">
@@ -52,7 +61,6 @@ class Game extends React.Component {
         <h2>Score: 0</h2>
         {selected.map((q, i) => (
           <div key={ i }>
-            {/* { const arrayQuest = [...q.incorrect_answers, q.correct_answer] } */}
             <p data-testid="question-category">{q.category}</p>
             <p data-testid="question-text">{q.question}</p>
             <div data-testid="answer-options">
@@ -62,11 +70,17 @@ class Game extends React.Component {
                   <button
                     key={ index }
                     type="button"
+                    className={
+                      que === q.correct_answer
+                        ? 'correct'
+                        : 'wrong'
+                    }
                     data-testid={
                       que === q.correct_answer
                         ? 'correct-answer'
                         : `wrong-answer-${index}`
                     }
+                    onClick={ this.showCorrectAnswer }
                   >
                     {que}
                   </button>))}
