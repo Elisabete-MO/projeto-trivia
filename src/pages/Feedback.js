@@ -10,13 +10,18 @@ class Feedback extends React.Component {
 
     this.state = {
       minAssertions: 3,
+      redirectToLogin: false,
       redirectToRanking: false,
     };
   }
 
   render() {
-    const { minAssertions, redirectToRanking } = this.state;
-    const { assertions, score } = this.props;
+    const { minAssertions, redirectToRanking, redirectToLogin } = this.state;
+    const { assertions, score, history } = this.props;
+
+    if (redirectToLogin) {
+      return <Redirect to="/" />;
+    }
 
     if (redirectToRanking) {
       return <Redirect to="/ranking" />;
@@ -26,6 +31,7 @@ class Feedback extends React.Component {
       <main>
         <Header />
         <div>
+          {/* Requisito 13 */}
           <p data-testid="feedback-text">
             {
               assertions >= minAssertions
@@ -35,12 +41,19 @@ class Feedback extends React.Component {
           </p>
           <p data-testid="feedback-total-score">{ score }</p>
           <p data-testid="feedback-total-question">{ assertions }</p>
-
-          {/* Requisito 18 */}
+          {/* Requisito 15 */}
+          <button
+            type="button"
+            data-testid="btn-play-again"
+            onClick={ () => { this.setState({ redirectToLogin: true }); } }
+          >
+            Play Again
+          </button>
+          {/* Requisito 16 */}
           <button
             type="button"
             data-testid="btn-ranking"
-            onClick={ () => { this.setState({ redirectToRanking: true }); } }
+            onClick={ () => { history.push('/ranking'); } }
           >
             Ranking
           </button>
@@ -58,9 +71,12 @@ const mapStateToProps = ({ player }) => ({
 });
 
 Feedback.propTypes = {
-  // name: PropTypes.string.isRequired,
   assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+  // name: PropTypes.string.isRequired,
   // profileImage: PropTypes.string.isRequired,
 };
 
