@@ -29,10 +29,7 @@ class Feedback extends React.Component {
 
     return (
       <main>
-        <div>
-          <Header />
-        </div>
-
+        <Header />
         <div>
           {/* Requisito 13 */}
           <p data-testid="feedback-text">
@@ -42,8 +39,6 @@ class Feedback extends React.Component {
                 : 'Could be better...'
             }
           </p>
-
-          {/* Requisito 14 */}
           <p data-testid="feedback-total-score">{ score }</p>
           <p data-testid="feedback-total-question">{ assertions }</p>
           {/* Requisito 15 */}
@@ -51,14 +46,6 @@ class Feedback extends React.Component {
             type="button"
             data-testid="btn-play-again"
             onClick={ () => { this.setState({ redirectToLogin: true }); } }
-          >
-            Play Again
-          </button>
-          {/* Requisito 15 */}
-          <button
-            type="button"
-            data-testid="btn-play-again"
-            onClick={ () => { history.push('/'); } }
           >
             Play Again
           </button>

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
+import { playerScore } from '../redux/actions';
 import '../styles/game.css';
 
 class Game extends React.Component {
@@ -9,10 +11,14 @@ class Game extends React.Component {
     super();
 
     this.state = {
-      // alternativas: [],
+      alternativas: [],
       selected: [],
       position: 0,
       value: 0.5,
+      isDisabled: false,
+      timer: 0,
+      intervalId: 0,
+      btnNext: false,
     };
   }
 
@@ -21,37 +27,133 @@ class Game extends React.Component {
   }
 
   getQuestion = async () => {
-    const { position } = this.state;
-
     const token = localStorage.getItem('token');
     const apiQuestion = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
     const response = await apiQuestion.json();
     const quest = response;
 
-    if (quest.response_code !== 0) {
+    this.setState(({ alternativas: quest }), () => this.checkToken());
+  };
+
+  checkToken = () => {
+    const { alternativas } = this.state;
+    console.log(alternativas);
+    if (alternativas.response_code !== 0) {
       const { history } = this.props;
       localStorage.removeItem('token');
       history.push('/');
     } else {
-      return this.setState({
-        // alternativas: quest.results,
-        selected: [quest.results[position]],
-      });
+      this.startTimeout();
+      this.setSelectedQuestion();
     }
   };
 
-  showCorrectAnswer = () => {
-    const wrongButtons = document.querySelectorAll('.wrong');
-    const correctButton = document.querySelector('.correct');
+  setSelectedQuestion = () => {
+    const { value, alternativas, position } = this.state;
+    const num = 5;
 
+    if (position < num) {
+      const selected = [alternativas.results[position]];
+      const answerArray = [...selected[0].incorrect_answers, selected[0].correct_answer]
+        .sort(() => Math.random() - value);
+
+      this.setState(({
+        selected,
+        answerArray,
+        btnNext: false,
+      }));
+    }
+  // } else {
+  //   this.setState({
+  //     // btnNext: false,
+  //   });
+  };
+
+  startTimeout = () => {
+    this.setState({ timer: 30 });
+
+    const DELAY = 1000;
+    const timeoutId = setInterval(() => {
+      const { timer, intervalId } = this.state;
+      this.setState({ timer: timer - 1 });
+
+      if (timer <= 1) {
+        this.setState({ isDisabled: true });
+
+        clearTimeout(intervalId);
+      }
+    }, DELAY);
+
+    this.setState({ intervalId: timeoutId });
+  };
+
+  showCorrectAnswer = ({ target }) => {
+    this.setScore(target);
+
+    const correctButton = document.querySelector('.correct');
     correctButton.style.border = '3px solid rgb(6, 240, 15)';
+
+    const wrongButtons = document.querySelectorAll('.wrong');
+
     wrongButtons.forEach((ele) => {
       ele.style.border = '3px solid red';
     });
+    this.setState({ btnNext: true });
   };
 
+  setScore = (target) => {
+    const { intervalId, selected, timer } = this.state;
+    const { dispatch, oldScore, oldAssertions } = this.props;
+    clearTimeout(intervalId);
+    let difficulty = 0;
+    let assertions = 0;
+    const selec = selected[0].difficulty;
+    if (target.className === 'correct') {
+      assertions = 1;
+      if (selec === 'easy') {
+        const num = 1;
+        difficulty = num;
+      } if (selec === 'medium') {
+        const num = 2;
+        difficulty = num;
+      } if (selec === 'hard') {
+        const num = 3;
+        difficulty = num;
+      }
+    }
+
+    const ten = 10;
+    const score = (ten + (timer * difficulty));
+    const total = {
+      score: score + oldScore,
+      assertions: assertions + oldAssertions,
+    };
+    if (target.className === 'correct') {
+      dispatch(playerScore(total));
+    }
+  };
+
+  handleClick = () => {
+    const { position } = this.state;
+
+    this.setState(
+      ({ position: position + 1 }),
+      this.setSelectedQuestion,
+      this.startTimeout(),
+    );
+  };
+
+  // this.setState({ age: value}, this.checkAge);
+  // this.setState(({ position: position + 1}), setSelectedQuestion);
+
   render() {
-    const { selected, value } = this.state;
+    const { selected, isDisabled, timer, answerArray, btnNext, position } = this.state;
+    console.log(selected);
+    const num = 5;
+    if (position === num) {
+      return <Redirect to="/feedback" />;
+    }
+
     return (
       <main>
         <div className="container_game">
@@ -64,39 +166,55 @@ class Game extends React.Component {
             <p data-testid="question-category">{q.category}</p>
             <p data-testid="question-text">{q.question}</p>
             <div data-testid="answer-options">
-              {[...q.incorrect_answers, q.correct_answer]
-                .sort(() => Math.random() - value)
-                .map((que, index) => (
-                  <button
-                    key={ index }
-                    type="button"
-                    className={
-                      que === q.correct_answer
-                        ? 'correct'
-                        : 'wrong'
-                    }
-                    data-testid={
-                      que === q.correct_answer
-                        ? 'correct-answer'
-                        : `wrong-answer-${index}`
-                    }
-                    onClick={ this.showCorrectAnswer }
-                  >
-                    {que}
-                  </button>))}
+              {answerArray.map((que, index) => (
+                <button
+                  key={ index }
+                  type="button"
+                  className={
+                    que === q.correct_answer
+                      ? 'correct'
+                      : 'wrong'
+                  }
+                  data-testid={
+                    que === q.correct_answer
+                      ? 'correct-answer'
+                      : `wrong-answer-${index}`
+                  }
+                  onClick={ this.showCorrectAnswer }
+                  disabled={ isDisabled }
+                >
+                  {que}
+                </button>))}
             </div>
           </div>
         ))}
+        { btnNext && (
+          <button
+            type="button"
+            data-testid="btn-next"
+            onClick={ this.handleClick }
+          >
+            Next
+          </button>
+        )}
+        <p id="counter">{timer}</p>
       </main>
     );
   }
 }
 
+const mapStateToProps = ({ player }) => ({
+  oldScore: player.score,
+  oldAssertions: player.assertions,
+});
+
 Game.propTypes = {
-//   dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  oldScore: PropTypes.number.isRequired,
+  oldAssertions: PropTypes.number.isRequired,
 };
 
-export default connect()(Game);
+export default connect(mapStateToProps)(Game);
