@@ -10,7 +10,8 @@ class Ranking extends React.Component {
   };
 
   getRankings() {
-    return JSON.parse(localStorage.getItem('ranking'));
+    const rankingInfo = JSON.parse(localStorage.getItem('ranking'));
+    return rankingInfo || [];
     // ranking: [
     //    { name: nome_da_pessoa, score: 10, picture: url_da_foto_no_gravatar }
     //  ]
