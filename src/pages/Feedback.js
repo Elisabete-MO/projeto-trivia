@@ -17,7 +17,7 @@ class Feedback extends React.Component {
 
   render() {
     const { minAssertions, redirectToRanking, redirectToLogin } = this.state;
-    const { assertions, score, history } = this.props;
+    const { assertions, score } = this.props;
 
     if (redirectToLogin) {
       return <Redirect to="/" />;
@@ -53,7 +53,7 @@ class Feedback extends React.Component {
           <button
             type="button"
             data-testid="btn-ranking"
-            onClick={ () => { history.push('/ranking'); } }
+            onClick={ () => { this.setState({ redirectToRanking: true }); } }
           >
             Ranking
           </button>
