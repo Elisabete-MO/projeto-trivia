@@ -27,7 +27,7 @@ const player = (state = INITIAL_STATE, { type, payload }) => {
   case REQUEST_STARTED:
     return { ...state };
   case REQUEST_FINISHED:
-    return { ...state, token: payload, gettingToken: true };
+    return { ...state, token: payload, gettingToken: true, score: 0 };
   default:
     return state;
   }

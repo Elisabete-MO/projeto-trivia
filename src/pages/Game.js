@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import { connect } from 'react-redux';
+import md5 from 'crypto-js/md5';
 import Header from '../components/Header';
 import { playerScore } from '../redux/actions';
 import '../styles/game.css';
@@ -19,11 +20,17 @@ class Game extends React.Component {
       timer: 0,
       intervalId: 0,
       btnNext: false,
+      ranking: [],
     };
   }
 
   componentDidMount() {
     this.getQuestion();
+    const ranking = JSON.parse(localStorage.getItem('ranking'));
+    // ranking && this.setState({ ranking });
+    if (ranking) {
+      this.setState({ ranking });
+    }
   }
 
   getQuestion = async () => {
@@ -146,9 +153,24 @@ class Game extends React.Component {
   // this.setState(({ position: position + 1}), setSelectedQuestion);
 
   render() {
-    const { selected, isDisabled, timer, answerArray, btnNext, position } = this.state;
+    const { selected,
+      isDisabled,
+      timer, answerArray,
+      btnNext,
+      position,
+      ranking,
+    } = this.state;
+
+    const { name, email, oldScore } = this.props;
     const num = 5;
+
     if (position === num) {
+      const imgGravatar = `https://www.gravatar.com/avatar/${md5(email)}`;
+      const playerRanking = { name, imgGravatar, score: oldScore };
+      const rankingTotal = [...ranking, playerRanking];
+      const sortRanking = rankingTotal.sort((a, b) => Number(b.score) - Number(a.score));
+      const testRank = JSON.stringify(sortRanking);
+      localStorage.setItem('ranking', testRank);
       return <Redirect to="/feedback" />;
     }
 
@@ -204,6 +226,8 @@ class Game extends React.Component {
 const mapStateToProps = ({ player }) => ({
   oldScore: player.score,
   oldAssertions: player.assertions,
+  name: player.name,
+  email: player.gravatarEmail,
 });
 
 Game.propTypes = {
@@ -213,6 +237,8 @@ Game.propTypes = {
   }).isRequired,
   oldScore: PropTypes.number.isRequired,
   oldAssertions: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps)(Game);
