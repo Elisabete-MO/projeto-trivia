@@ -17,10 +17,10 @@ class Login extends React.Component {
     };
   }
 
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch(getToken());
-  }
+  // componentDidMount() {
+  //   const { dispatch } = this.props;
+  //   dispatch(getToken());
+  // }
 
   handleChange = ({ target: { name, value } }) => {
     this.setState(({ [name]: value }), () => this.verifyBtn());
@@ -36,12 +36,13 @@ class Login extends React.Component {
   };
 
   handleSubmit = () => {
-    const { dispatch, history } = this.props;
-    const { name, email } = this.state;
+    const { dispatch } = this.props;
 
-    const playerInfo = { name, email };
-    dispatch(playerLogin(playerInfo));
-    history.push('./game');
+    dispatch(getToken());
+
+    // const playerInfo = { name, email };
+    // dispatch(playerLogin(playerInfo));
+    // history.push('./game');
   };
 
   clickButtonSettings = () => {
@@ -50,9 +51,17 @@ class Login extends React.Component {
 
   render() {
     const { email, name, isBtnDisabled, redirectToSettings } = this.state;
+    const { gettingToken, dispatch } = this.props;
 
     if (redirectToSettings) {
       return <Redirect to="/settings" />;
+    }
+
+    if (gettingToken) {
+      const playerInfo = { name, email };
+      dispatch(playerLogin(playerInfo));
+
+      return <Redirect to="/game" />;
     }
 
     return (
@@ -97,6 +106,7 @@ const mapStateToProps = (state) => ({
 });
 
 Login.propTypes = {
+  gettingToken: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,

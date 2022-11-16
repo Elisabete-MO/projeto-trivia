@@ -22,6 +22,7 @@ class Ranking extends React.Component {
     if (redirectLogin) {
       return <Redirect to="/" />;
     }
+
     return (
       <div>
         <h1 data-testid="ranking-title">Ranking Page</h1>
