@@ -6,13 +6,18 @@ const INITIAL_STATE = {
   score: 0, // pontuação,
   gravatarEmail: '', // email-da-pessoa,
   token: '', // token-do-player
-  gettingToken: true, // esperando-api
+  gettingToken: false, // esperando-api
 };
 
 const player = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case PLAYER_LOGIN:
-    return { ...state, name: payload.name, gravatarEmail: payload.email };
+    return {
+      ...state,
+      name: payload.name,
+      gravatarEmail: payload.email,
+      gettingToken: false,
+    };
   case SET_SCORE:
     return {
       ...state,
@@ -22,7 +27,7 @@ const player = (state = INITIAL_STATE, { type, payload }) => {
   case REQUEST_STARTED:
     return { ...state };
   case REQUEST_FINISHED:
-    return { ...state, token: payload, gettingToken: false };
+    return { ...state, token: payload, gettingToken: true };
   default:
     return state;
   }

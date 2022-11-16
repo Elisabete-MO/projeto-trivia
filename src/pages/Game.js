@@ -37,7 +37,6 @@ class Game extends React.Component {
 
   checkToken = () => {
     const { alternativas } = this.state;
-    console.log(alternativas);
     if (alternativas.response_code !== 0) {
       const { history } = this.props;
       localStorage.removeItem('token');
@@ -148,7 +147,6 @@ class Game extends React.Component {
 
   render() {
     const { selected, isDisabled, timer, answerArray, btnNext, position } = this.state;
-    console.log(selected);
     const num = 5;
     if (position === num) {
       return <Redirect to="/feedback" />;
