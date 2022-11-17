@@ -1,5 +1,5 @@
 import React from 'react';
-import { getByTestId, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithRouterAndRedux } from './helpers/renderWithRouterAndRedux';
 import App from '../App';
@@ -7,7 +7,6 @@ import App from '../App';
 describe('Teste a página <Login.js />', () => {
   const dataIdName = 'input-player-name';
   const dataIdEmail = 'input-gravatar-email';
-  const dataIdBtn = 'btn-play';
   const dataEmail = 'test@mail.com';
   const dataName = 'Rolando Penha';
 
@@ -30,7 +29,7 @@ describe('Teste a página <Login.js />', () => {
   test('Teste se a página contém um botão com título "Jogar"', () => {
     renderWithRouterAndRedux(<App />);
 
-    const loginBtn = screen.getByRole('button', {name: /jogar/i});
+    const loginBtn = screen.getByRole('button', { name: /jogar/i });
     expect(loginBtn).toBeInTheDocument();
     expect(loginBtn).toHaveAttribute('type', 'button');
     expect(loginBtn.innerHTML).toBe('Jogar');
@@ -47,7 +46,7 @@ describe('Teste a página <Login.js />', () => {
     userEvent.type(loginName, dataName);
     expect(loginName).toHaveValue(dataName);
 
-    const loginBtn = screen.getByRole('button', {name: /jogar/i});
+    const loginBtn = screen.getByRole('button', { name: /jogar/i });
     expect(loginBtn).toBeEnabled();
   });
 
@@ -58,7 +57,7 @@ describe('Teste a página <Login.js />', () => {
     userEvent.type(loginEmail, 'test');
     expect(loginEmail).toHaveValue('test');
 
-    const loginBtn = screen.getByRole('button', {name: /jogar/i});
+    const loginBtn = screen.getByRole('button', { name: /jogar/i });
     expect(loginBtn).not.toBeEnabled();
   });
 
@@ -69,7 +68,7 @@ describe('Teste a página <Login.js />', () => {
     userEvent.type(loginName);
     expect(loginName.value).toBe('');
 
-    const loginBtn = screen.getByRole('button', {name: /jogar/i});
+    const loginBtn = screen.getByRole('button', { name: /jogar/i });
     expect(loginBtn).not.toBeEnabled();
   });
 
@@ -83,11 +82,11 @@ describe('Teste a página <Login.js />', () => {
     userEvent.type(loginEmail, dataEmail);
     expect(loginEmail).toHaveValue(dataEmail);
 
-    const loginPassword = screen.getByTestId(dataIdName);
-    userEvent.type(loginPassword, dataName);
-    expect(loginPassword).toHaveValue(dataName);
+    const loginName = screen.getByTestId(dataIdName);
+    userEvent.type(loginName, dataName);
+    expect(loginName).toHaveValue(dataName);
 
-    const loginBtn = screen.getByRole('button', {name: /jogar/i});
+    const loginBtn = screen.getByRole('button', { name: /jogar/i });
     expect(loginBtn).toBeEnabled();
     userEvent.click(loginBtn);
 

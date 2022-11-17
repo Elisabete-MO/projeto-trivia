@@ -1,136 +1,200 @@
 import React from 'react';
-import { getByTestId, screen } from '@testing-library/react';
+import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 import { renderWithRouterAndRedux } from './helpers/renderWithRouterAndRedux';
-import Game from '../pages/Game';
+import { response } from './helpers/mocks';
 import App from '../App';
-import Login from '../pages/Login';
+
+const timeOut = 30000;
+jest.setTimeout(timeOut);
 
 describe('Teste a página <Game.js />', () => {
   const dataLoginEmail = 'input-gravatar-email';
   const dataLoginName = 'input-player-name';
-
   const dataIdName = 'header-player-name';
   const dataIdScore = 'header-score';
   const dataIdPicture = 'header-profile-picture';
-  const dataIdBtn = 'btn-play';
   const dataEmail = 'test@mail.com';
-  const dataName = 'Rolando Penha';
+  const dataName = 'Test';
+  const numberButtons = 3;
 
   test(
-    'Teste se a página contém um header com as informações da pessoa jogadora',
-    async () => {
-      renderWithRouterAndRedux(<Login />);
-      const loginEmail = screen.getByTestId(dataLoginEmail);
-      userEvent.type(loginEmail, dataLoginEmail);
+    'Se a página contém um header com as informações da pessoa jogadora',
+    () => {
+      const INITIAL_STATE = {
+        player: {
+          name: dataName,
+          gravatarEmail: dataEmail,
+          score: 0,
+        },
+      };
+      const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
 
+      expect(history.location.pathname).toBe('/game');
+
+      const gameHeaderPicture = screen.getByTestId(dataIdPicture);
+      expect(gameHeaderPicture).toHaveAttribute('src');
+      expect(gameHeaderPicture).toBeInTheDocument();
+
+      const gameHeaderName = screen.getByTestId(dataIdName);
+      expect(gameHeaderName).toBeInTheDocument();
+      expect(gameHeaderName.innerHTML).toBe(dataName);
+    },
+  );
+
+  test('Se a página contém um header com a pontuação zerada', () => {
+    const INITIAL_STATE = {
+      player: {
+        name: dataName,
+        gravatarEmail: dataEmail,
+        score: 0,
+      },
+    };
+    const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
+
+    expect(history.location.pathname).toBe('/game');
+
+    const gameHeaderScore = screen.getByTestId(dataIdScore);
+    expect(gameHeaderScore).toBeInTheDocument();
+    expect(gameHeaderScore.innerHTML).toStrictEqual('0');
+  });
+
+  test(
+    'Se o token inválido é excluído e a aplicação é redirecionada',
+    async () => {
+      const INITIAL_STATE = {
+        player: {
+          name: dataName,
+          gravatarEmail: dataEmail,
+          score: 0,
+        },
+      };
+      const invToken = {
+        response_code: 3,
+        results: [],
+      };
+
+      jest.spyOn(global, 'fetch');
+      global.fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(invToken),
+      });
+
+      const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
+
+      jest.spyOn(global, 'fetch');
+      global.fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(invToken),
+      });
+
+      await act(async () => {
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(history.location.pathname).toBe('/game');
+      });
+
+      await act(async () => {
+        expect(history.location.pathname).toBe('/');
+      });
+    },
+  );
+
+  test(
+    'Se ao clickar no botão "Jogar" e a aplicação é redirecionada para "/game"',
+    async () => {
+      jest.spyOn(global, 'fetch');
+      global.fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(response),
+      });
+
+      const { history } = renderWithRouterAndRedux(<App />);
+      const loginEmail = screen.getByTestId(dataLoginEmail);
+      userEvent.type(loginEmail, dataEmail);
       const loginName = screen.getByTestId(dataLoginName);
       userEvent.type(loginName, dataName);
-
       const loginBtn = screen.getByRole('button', { name: /jogar/i });
       userEvent.click(loginBtn);
 
-      const gameHeaderPicture = screen.getByTestId(dataIdPicture);
-      expect(gameHeaderPicture).toHaveAttribute('img');
-      console.log(gameHeaderPicture);
-      expect(gameHeaderPicture).toBeInTheDocument();
-      const gameHeaderName = screen.getByTestId(dataIdName);
-      expect(gameHeaderName).toBeInTheDocument();
-      const gameHeaderScore = screen.getByTestId(dataIdScore);
-      expect(gameHeaderScore).toBeInTheDocument();
+      await act(async () => {
+        expect(history.location.pathname).toBe('/game');
+      });
+    },
+  );
 
-      expect.assertions(1);
-      await getMagicCard('130550');
-      expect(fetch).toHaveBeenCalledWith('https://api.magicthegathering.io/v1/cards/130550');
-      
+  test('Se a categoria da pergunta está presente', async () => {
+    const INITIAL_STATE = {
+      player: {
+        name: dataName,
+        gravatarEmail: dataEmail,
+        score: 0,
+      },
+    };
+    global.fetch.mockClear();
+
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(response),
+    });
+
+    const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
+
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/game');
+    });
+    const gameCategory = screen.findByText('Entertainment: Video Games');
+    expect(await gameCategory).toBeInTheDocument();
   });
 
-  // test('Teste se a página contém um campo do tipo "text" para inserir o nome', () => {
-  //   renderWithRouterAndRedux(<App />);
-  //   const loginName = screen.getByTestId(dataIdName);
+  test('Se os botoes de resposta estão presentes', async () => {
+    const INITIAL_STATE = {
+      player: {
+        name: dataName,
+        gravatarEmail: dataEmail,
+        score: 0,
+      },
+    };
+    global.fetch.mockClear();
 
-  //   expect(loginName).toBeInTheDocument();
-  //   expect(loginName).toHaveAttribute('type', 'text');
-  // });
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(response),
+    });
 
-  // test('Teste se a página contém um botão com título "Jogar"', () => {
-  //   renderWithRouterAndRedux(<App />);
+    const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
 
-  //   const loginBtn = screen.getByRole('button', {name: /jogar/i});
-  //   expect(loginBtn).toBeInTheDocument();
-  //   expect(loginBtn).toHaveAttribute('type', 'button');
-  //   expect(loginBtn.innerHTML).toBe('Jogar');
-  // });
+    await waitFor(async () => {
+      expect(history.location.pathname).toBe('/game');
+      const btnAnswer = screen.getByTestId('correct-answer');
+      expect(btnAnswer).toBeInTheDocument();
+      const btnWrong = document.getElementsByClassName('wrong');
+      expect(btnWrong.length).toBe(numberButtons);
+    });
+  });
 
-  // test('Passar dados válidos para testar se o botão "Entrar" fica habilitado', () => {
-  //   renderWithRouterAndRedux(<App />);
+  test('Se os botoes de resposta apresentam as cores corretas', async () => {
+    const INITIAL_STATE = {
+      player: {
+        name: dataName,
+        gravatarEmail: dataEmail,
+        score: 0,
+      },
+    };
+    global.fetch.mockClear();
 
-  //   const loginEmail = screen.getByTestId(dataIdEmail);
-  //   userEvent.type(loginEmail, dataEmail);
-  //   expect(loginEmail).toHaveValue(dataEmail);
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(response),
+    });
 
-  //   const loginName = screen.getByTestId(dataIdName);
-  //   userEvent.type(loginName, dataName);
-  //   expect(loginName).toHaveValue(dataName);
+    const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
 
-  //   const loginBtn = screen.getByRole('button', {name: /jogar/i});
-  //   expect(loginBtn).toBeEnabled();
-  // });
-
-  // test('Passar email inválido para testar se o botão "Entrar" fica habilitado', () => {
-  //   renderWithRouterAndRedux(<App />);
-
-  //   const loginEmail = screen.getByTestId(dataIdEmail);
-  //   userEvent.type(loginEmail, 'test');
-  //   expect(loginEmail).toHaveValue('test');
-
-  //   const loginBtn = screen.getByRole('button', {name: /jogar/i});
-  //   expect(loginBtn).not.toBeEnabled();
-  // });
-
-  // test('Passar nome inválido para testar se o botão "Entrar" fica habilitado', () => {
-  //   renderWithRouterAndRedux(<App />);
-
-  //   const loginName = screen.getByTestId(dataIdName);
-  //   userEvent.type(loginName);
-  //   expect(loginName.value).toBe('');
-
-  //   const loginBtn = screen.getByRole('button', {name: /jogar/i});
-  //   expect(loginBtn).not.toBeEnabled();
-  // });
-
-  // test('Passar dados válidos para testar se o token vai para o estado global', () => {
-  //   const { store, history } = renderWithRouterAndRedux(
-  //     <App />,
-  //     { initialState: { player: { gravatarEmail: dataEmail } } },
-  //   );
-
-  //   const loginEmail = screen.getByTestId(dataIdEmail);
-  //   userEvent.type(loginEmail, dataEmail);
-  //   expect(loginEmail).toHaveValue(dataEmail);
-
-  //   const loginPassword = screen.getByTestId(dataIdName);
-  //   userEvent.type(loginPassword, dataName);
-  //   expect(loginPassword).toHaveValue(dataName);
-
-  //   const loginBtn = screen.getByRole('button', {name: /jogar/i});
-  //   expect(loginBtn).toBeEnabled();
-  //   userEvent.click(loginBtn);
-
-  //   const estadoGlobal = store.getState();
-  //   const { player: { gravatarEmail } } = estadoGlobal;
-
-  //   expect(history.location.pathname).toBe('/game');
-
-  //   expect(gravatarEmail).toBe(dataEmail);
-  // });
-
-  // test('Testar se o botão de settings redireciona para a pagina', () => {
-  //   const { history } = renderWithRouterAndRedux(<App />);
-
-  //   const inputSetting = screen.getByTestId('btn-settings');
-  //   expect(inputSetting).toBeInTheDocument();
-  //   userEvent.click(inputSetting);
-  //   expect(history.location.pathname).toBe('/settings');
-  // });
+    await waitFor(async () => {
+      expect(history.location.pathname).toBe('/game');
+      const btnAnswer = screen.getByTestId('correct-answer');
+      userEvent.click(btnAnswer);
+      expect(btnAnswer).toHaveStyle('border: 3px solid rgb(6, 240, 15);');
+      const btnWrong = screen.getAllByTestId(/wrong-answer/i);
+      expect(btnWrong[0]).toHaveStyle('border: 3px solid red;');
+      expect(btnWrong).toHaveLength(numberButtons);
+    });
+  });
 });
