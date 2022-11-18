@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithRouterAndRedux } from './helpers/renderWithRouterAndRedux';
 import App from '../App';
@@ -8,7 +8,7 @@ describe('Teste a página <Login.js />', () => {
   const dataIdName = 'input-player-name';
   const dataIdEmail = 'input-gravatar-email';
   const dataEmail = 'test@mail.com';
-  const dataName = 'Rolando Penha';
+  const dataName = 'Test';
 
   test('Teste se a página contém um campo do tipo "email" para inserir o email', () => {
     renderWithRouterAndRedux(<App />);
@@ -72,31 +72,37 @@ describe('Teste a página <Login.js />', () => {
     expect(loginBtn).not.toBeEnabled();
   });
 
-  test('Passar dados válidos para testar se o token vai para o estado global', () => {
-    const { store, history } = renderWithRouterAndRedux(
-      <App />,
-      { initialState: { player: { gravatarEmail: dataEmail } } },
-    );
+  test(
+    'Passar dados válidos para testar se o token vai para o estado global',
+    async () => {
+      const { store, history } = renderWithRouterAndRedux(
+        <App />,
+        { initialState: { player: { gravatarEmail: dataEmail } } },
+      );
 
-    const loginEmail = screen.getByTestId(dataIdEmail);
-    userEvent.type(loginEmail, dataEmail);
-    expect(loginEmail).toHaveValue(dataEmail);
+      const loginEmail = screen.getByTestId(dataIdEmail);
+      userEvent.type(loginEmail, dataEmail);
+      expect(loginEmail).toHaveValue(dataEmail);
 
-    const loginName = screen.getByTestId(dataIdName);
-    userEvent.type(loginName, dataName);
-    expect(loginName).toHaveValue(dataName);
+      const loginName = screen.getByTestId(dataIdName);
+      userEvent.type(loginName, dataName);
+      expect(loginName).toHaveValue(dataName);
 
-    const loginBtn = screen.getByRole('button', { name: /jogar/i });
-    expect(loginBtn).toBeEnabled();
-    userEvent.click(loginBtn);
+      const loginBtn = screen.getByRole('button', { name: /jogar/i });
+      expect(loginBtn).toBeEnabled();
+      userEvent.click(loginBtn);
 
-    const estadoGlobal = store.getState();
-    const { player: { gravatarEmail } } = estadoGlobal;
+      await waitFor(() => {
+        expect(history.location.pathname).toBe('/game');
+      });
+      const estadoGlobal = store.getState();
+      const { player: { gravatarEmail } } = estadoGlobal;
 
-    expect(history.location.pathname).toBe('/game');
+      expect(gravatarEmail).toBe(dataEmail);
 
-    expect(gravatarEmail).toBe(dataEmail);
-  });
+      expect(history.location.pathname).toBe('/game');
+    },
+  );
 
   test('Testar se o botão de settings redireciona para a pagina', () => {
     const { history } = renderWithRouterAndRedux(<App />);
