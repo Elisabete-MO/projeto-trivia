@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 // import PropTypes from 'prop-types';
+import '../styles/ranking.css';
 
 const countRank = 5;
 
@@ -24,13 +25,14 @@ class Ranking extends React.Component {
     }
 
     return (
-      <div>
+      <div className="container_ranking">
         <h1 data-testid="ranking-title">Ranking Page</h1>
         <ol>
           {
             this.getRankings().map((player, index) => index < countRank && (
               <li key={ index }>
                 <img
+                  className="image_ranking"
                   alt="Gravatar"
                   src={ player.imgGravatar }
                 />

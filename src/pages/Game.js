@@ -176,48 +176,48 @@ class Game extends React.Component {
 
     return (
       <main>
+        <Header />
         <div className="container_game">
-          <Header />
-        </div>
-        <h1>Trybe</h1>
-        <h2>Score: 0</h2>
-        {selected.map((q, i) => (
-          <div key={ i }>
-            <p data-testid="question-category">{q.category}</p>
-            <p data-testid="question-text">{q.question}</p>
-            <div data-testid="answer-options">
-              {answerArray.map((que, index) => (
-                <button
-                  key={ index }
-                  type="button"
-                  className={
-                    que === q.correct_answer
-                      ? 'correct'
-                      : 'wrong'
-                  }
-                  data-testid={
-                    que === q.correct_answer
-                      ? 'correct-answer'
-                      : `wrong-answer-${index}`
-                  }
-                  onClick={ this.showCorrectAnswer }
-                  disabled={ isDisabled }
-                >
-                  {que}
-                </button>))}
+          <h1>Trybe</h1>
+          {/* <h2>Score: 0</h2> */}
+          {selected.map((q, i) => (
+            <div key={ i }>
+              <p data-testid="question-category">{q.category}</p>
+              <p data-testid="question-text">{q.question}</p>
+              <div data-testid="answer-options">
+                {answerArray.map((que, index) => (
+                  <button
+                    key={ index }
+                    type="button"
+                    className={
+                      que === q.correct_answer
+                        ? 'correct'
+                        : 'wrong'
+                    }
+                    data-testid={
+                      que === q.correct_answer
+                        ? 'correct-answer'
+                        : `wrong-answer-${index}`
+                    }
+                    onClick={ this.showCorrectAnswer }
+                    disabled={ isDisabled }
+                  >
+                    {que}
+                  </button>))}
+              </div>
             </div>
-          </div>
-        ))}
-        { btnNext && (
-          <button
-            type="button"
-            data-testid="btn-next"
-            onClick={ this.handleClick }
-          >
-            Next
-          </button>
-        )}
-        <p id="counter">{timer}</p>
+          ))}
+          { btnNext && (
+            <button
+              type="button"
+              data-testid="btn-next"
+              onClick={ this.handleClick }
+            >
+              Next
+            </button>
+          )}
+          <p id="counter">{timer}</p>
+        </div>
       </main>
     );
   }

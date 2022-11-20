@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Header from '../components/Header';
+import '../styles/feedback.css';
 
 class Feedback extends React.Component {
   constructor() {
@@ -30,7 +31,7 @@ class Feedback extends React.Component {
     return (
       <main>
         <Header />
-        <div>
+        <div className="container_feedback">
           {/* Requisito 13 */}
           <p data-testid="feedback-text">
             {
