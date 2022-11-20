@@ -9,7 +9,7 @@
 
 .boxLogin {
   align-items: center;
-  background: linear-gradient(90deg, rgba(34,45,195,0.8), rgba(253,45,63,0.8));
+  background: linear-gradient(90deg, rgba(34, 45, 195, 0.8), rgba(253, 45, 63, 0.8));
   border-radius: 20px;
   box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
   display: flex;
