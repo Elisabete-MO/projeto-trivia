@@ -92,7 +92,7 @@ describe('Teste a página <Game.js />', () => {
         expect(history.location.pathname).toBe('/game');
       });
 
-      await act(async () => {
+      waitFor(() => {
         expect(history.location.pathname).toBe('/');
       });
     },
@@ -114,7 +114,7 @@ describe('Teste a página <Game.js />', () => {
       const loginBtn = screen.getByRole('button', { name: /jogar/i });
       userEvent.click(loginBtn);
 
-      await act(async () => {
+      waitFor(() => {
         expect(history.location.pathname).toBe('/game');
       });
     },
@@ -128,8 +128,6 @@ describe('Teste a página <Game.js />', () => {
         score: 0,
       },
     };
-    global.fetch.mockClear();
-
     jest.spyOn(global, 'fetch');
     global.fetch.mockResolvedValue({
       json: jest.fn().mockResolvedValue(response),
@@ -137,7 +135,7 @@ describe('Teste a página <Game.js />', () => {
 
     const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
 
-    await waitFor(() => {
+    waitFor(() => {
       expect(history.location.pathname).toBe('/game');
     });
     const gameCategory = screen.findByText('Entertainment: Video Games');
@@ -152,8 +150,6 @@ describe('Teste a página <Game.js />', () => {
         score: 0,
       },
     };
-    global.fetch.mockClear();
-
     jest.spyOn(global, 'fetch');
     global.fetch.mockResolvedValue({
       json: jest.fn().mockResolvedValue(response),
@@ -161,7 +157,7 @@ describe('Teste a página <Game.js />', () => {
 
     const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
 
-    await waitFor(async () => {
+    waitFor(() => {
       expect(history.location.pathname).toBe('/game');
       const btnAnswer = screen.getByTestId('correct-answer');
       expect(btnAnswer).toBeInTheDocument();
@@ -178,7 +174,34 @@ describe('Teste a página <Game.js />', () => {
         score: 0,
       },
     };
-    global.fetch.mockClear();
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(response),
+    });
+
+    const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
+
+    waitFor(() => {
+      expect(history.location.pathname).toBe('/game');
+      const btnAnswer = screen.getByTestId('correct-answer');
+      userEvent.click(btnAnswer);
+      expect(btnAnswer).toHaveStyle('border: 3px solid rgb(6, 240, 15);');
+      const btnWrong = screen.getAllByTestId(/wrong-answer/i);
+      expect(btnWrong[0]).toHaveStyle('border: 3px solid red;');
+      expect(btnWrong).toHaveLength(numberButtons);
+    });
+  });
+
+  test('Se os botoes de resposta ficam desabilitados após 30s', async () => {
+    const INITIAL_STATE = {
+      player: {
+        name: dataName,
+        gravatarEmail: dataEmail,
+        score: 0,
+        oldAssertions: 0,
+        assertions: 0,
+      },
+    };
 
     jest.spyOn(global, 'fetch');
     global.fetch.mockResolvedValue({
@@ -187,14 +210,12 @@ describe('Teste a página <Game.js />', () => {
 
     const { history } = renderWithRouterAndRedux(<App />, INITIAL_STATE, '/game');
 
-    await waitFor(async () => {
+    waitFor(() => {
       expect(history.location.pathname).toBe('/game');
-      const btnAnswer = screen.getByTestId('correct-answer');
-      userEvent.click(btnAnswer);
-      expect(btnAnswer).toHaveStyle('border: 3px solid rgb(6, 240, 15);');
-      const btnWrong = screen.getAllByTestId(/wrong-answer/i);
-      expect(btnWrong[0]).toHaveStyle('border: 3px solid red;');
-      expect(btnWrong).toHaveLength(numberButtons);
+      const buttons = document.getElementsByClassName('wrong');
+      expect(buttons[0]).toBeDisabled();
+      expect(buttons[1]).toBeDisabled();
+      expect(buttons[2]).toBeDisabled();
     });
   });
 });
