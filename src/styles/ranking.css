@@ -1,4 +1,4 @@
-.container_game {
+.container_ranking {
   align-items: center;
   background: rgba(41, 40, 40, 0.781);
   border: solid 2px rgba(41, 40, 40, 0.8);
@@ -10,4 +10,15 @@
   margin: 3% auto;
   text-align: center;
   width: 80%;
+}
+
+.image_ranking {
+  background: rgba(41, 40, 40, 0.781);
+  border: solid 2px rgba(41, 40, 40, 0.8);
+  border-radius: 100px;
+  box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
+  flex-basis: 20px;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }

@@ -1,26 +1,15 @@
 .container_login {
-  height: 100%;
-  justify-content: center;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-/* .container_login {
   align-items: center;
   display: flex;
-  flex-flow: column wrap;
-  height: 99%;
-  left: 0;
+  height: 98%;
+  justify-content: center;
   position: absolute;
-  top: 0;
-  width: 99.4%;
-} */
+  width: 99%;
+}
 
 .boxLogin {
-  align-items: stretch;
-  background: rgba(139, 127, 127, 0.808);
+  align-items: center;
+  background: linear-gradient(90deg, rgba(34, 45, 195, 0.8), rgba(253, 45, 63, 0.8));
   border-radius: 20px;
   box-shadow: 0 0 26px rgba(224, 226, 236, 0.8);
   display: flex;
@@ -29,45 +18,4 @@
   justify-content: space-evenly;
   text-align: center;
   width: 40%;
-}
-
-.h1login {
-  color: rgb(12, 35, 112);
-  font-size: 36px;
-  text-shadow: 3px 3px 15px rgba(255, 255, 255, 0.445);
-}
-
-.inputLogin {
-  border: 1px solid #e2e3e4;
-  border-radius: 20px;
-  box-shadow: 0 0 26px rgba(24, 24, 75, 0.8);
-  color: #003be5;
-  flex-basis: 200%;
-  font-size: 14px;
-  height: 40px;
-  line-height: 20px;
-  text-align: center;
-  width: 80%;
-}
-
-.btnLogin {
-  align-self: center;
-  background: rgba(0, 57, 230, 0.5);
-  border-radius: 100px;
-  box-shadow: 0 0 26px rgba(24, 24, 75, 0.8);
-  color: white;
-  height: 40px;
-  letter-spacing: 0.03em;
-  line-height: 20px;
-  text-align: center;
-  transition-duration: 0.4s;
-  width: 50%;
-}
-
-.btnLogin:hover {
-  background-color: rgba(200, 0, 0, 0.5);
-}
-
-.btnLogin:disabled {
-  background-color: rgba(31, 30, 30, 0.5);
 }

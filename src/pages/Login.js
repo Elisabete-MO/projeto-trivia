@@ -65,37 +65,41 @@ class Login extends React.Component {
     }
 
     return (
-      <main>
-        <input
-          placeholder="Qual é o seu nome?"
-          data-testid="input-player-name"
-          name="name"
-          type="text"
-          onChange={ this.handleChange }
-          value={ name }
-        />
-        <input
-          placeholder="Qual é o seu e-mail do gravatar?"
-          data-testid="input-gravatar-email"
-          name="email"
-          type="email"
-          onChange={ this.handleChange }
-          value={ email }
-        />
-        <button
-          type="button"
-          data-testid="btn-play"
-          disabled={ isBtnDisabled }
-          onClick={ this.handleSubmit }
-        >
-          Jogar
-        </button>
-        <input
-          data-testid="btn-settings"
-          type="submit"
-          value="Settings"
-          onClick={ this.clickButtonSettings }
-        />
+      <main className="container_login">
+        <div className="boxLogin">
+          <input
+            placeholder="Qual é o seu nome?"
+            data-testid="input-player-name"
+            name="name"
+            type="text"
+            onChange={ this.handleChange }
+            value={ name }
+          />
+          <input
+            placeholder="Qual é o seu e-mail do gravatar?"
+            data-testid="input-gravatar-email"
+            name="email"
+            type="email"
+            onChange={ this.handleChange }
+            value={ email }
+          />
+          <button
+            type="button"
+            data-testid="btn-play"
+            disabled={ isBtnDisabled }
+            onClick={ this.handleSubmit }
+          >
+            Jogar
+          </button>
+          <button
+            data-testid="btn-settings"
+            type="submit"
+            value="Settings"
+            onClick={ this.clickButtonSettings }
+          >
+            Settings
+          </button>
+        </div>
       </main>
     );
   }
